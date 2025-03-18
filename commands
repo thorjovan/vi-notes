@@ -1,0 +1,156 @@
+This is a short and sweet guide of how to use VI editor. 
+
+vi [filename] = opens the file in vi editor
+
+Pressing the i button sets the user in INSERT MODE, which makes it possible to write in the file (provided the user has permission to do so)
+Press Esc key to to exit INSERT MODE and return to NORMAL MODE. 
+
+In NORMAL mode, the following commands (included, but not limited to) can be issued:
+
+:w [filename] = save as [filename]
+:q = exit (without saving current status)
+:wq = save (as is) and exit
+
+-------------------------------------------------------------------------
+
+:
+search downwards: 
+/[text]
+
+search upwards: 
+?[text]
+
+n = next
+N = previous
+
+:set nu = gives the rows numbers
+:set nonu = removes the numbers 
+
+:g/text1/s/text2/g = replaces everything that is "text1" to "text2" in the file
+
+:/text2/s/text3/text4/g will look for text2, and replaces text3 (which is in text2) with text4
+
+For example: 
+1: john@random-mail-domain.com ---> johnny@random-mail-domain.com
+2: johnny@random-mail-domain.com ---> johnny@-other-random-mail-domain.com
+(text1=john
+text2=johnny
+text3=random-mail-domain.com
+text4=other-random-mail-domain.com)
+
+--------------------------------------------------------------
+
+Search and replace: 
+
+:g/,/s//(crtl+v)(Enter)/g
+separates by comma sign and breaks into new line
+
+:g!/@/d
+removes all rows/lines that has no @
+
+Example: 
+It now looks like this: 
+"e":["name.name@email.com"]
+
+:g/"e":\\["/s///g
+
+
+:.,$!sort -u 
+sorts all the lines and and removes duplicates:
+
+:w (new filename)
+writes the outcome into a new file
+
+cat emails-ac.txt | cut -d "@" -f(number) | sort | uniq -c
+
+SEARCH FOR IP:
+:g!/\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\
+
+\\ in front of a sign means literally THAT sign and not the special char
+
+
+. = 0 or 1 char
+? = 1 char
+\* = repeat previous
+
+:g/.* \\(\\d\\{1,3}\\.\\d\\{1,3}\\.\\d\\{1,3}\\.\\d\\{1,3}\\).* \\(\\d\\{1,3}\\.\\d\\{1,3}\\.\\d\\{1,3}\\.\\d\\{1,3}\\).*/s//\\1 \\2/g 
+
+\\(\\d\\{1,3}\\.\\d\\{1,3}\\.\\d\\{1,3}\\.\\d\\{1,3}\\) 
+\[[NUMBER.NUMBER.NUMBER.NUMBER\]]]  stored in a buffert/cache
+
+.* (space after) 
+random crap
+
+-----------------------------------------------
+
+cat hashfile.txt | cut -d ':' -f 1,2 | tee -a output.txt
+
+
+Have a file with columns and you wanna remove the first one? 
+:%s/^[^ ]* //
+
+Here is a step-by-step breakdown of the command:
+
+- `:%s` applies the substitution to every line in the file.
+- `^[^ ]* ` matches:
+    - `^`: the beginning of the line.
+    - `[^ ]*`: any number of characters that are not spaces.
+    - : a space. Remember there's a space after the asterisk and before the //
+
+This pattern effectively matches everything from the start of the line up to and including the first space. 
+The substitution `//` replaces the matched text with nothing, effectively removing it.
+
+
+
+-----------------------------------------------------------------
+
+Wanna remove empty lines? 
+
+:g/^$/d
+
+Here is a step-by-step breakdown of the command:
+
+- :g/^$/d :
+    - `:g` stands for "global" and applies the following command to all lines that match the pattern.
+    - `^$` is a regular expression that matches empty lines (lines with no characters).
+    - `d` deletes the matched lines.
+    
+--------------------------------------------------------------------------
+
+Have indented unnecessary spaces in the beginning of lines? 
+
+":%s/^\\s\\+//"
+
+Here is a step-by-step breakdown of the command:
+
+- `:%s` applies the substitution to every line in the file.
+- `^\s\+` matches:
+    - `^`: the beginning of the line.
+    - `\s\+`: one or more whitespace characters (spaces, tabs, etc.).
+- `//` replaces the matched whitespace with nothing, effectively removing it.
+
+That way, the user can change a list from looking like this: 
+
+admin
+            spongebob
+      gary-the-snail
+   patrick
+        krab$$$
+    sandy
+   squidward
+  larry
+
+to this: 
+
+admin
+spongebob
+gary-the-snail
+patrick
+krab$$$
+sandy
+squidward
+larry
+
+This kind of thing is not uncommon when running into lists in different formats/structures. 
+-------------------------------------------------------------------------
+
